@@ -1,6 +1,3 @@
-
-
-
 class EventsManager {
     constructor() {
         this.obtenerDataInicial()
@@ -25,20 +22,21 @@ class EventsManager {
             }
           },
           error: function(){
-            alert("error en la comunicación con el servidor");
+            alert("Error en la comunicación con el servidor");
           }
         })
 
     }
 
     poblarCalendario(eventos) {
+      let fechaActual = new Date();
         $('.calendario').fullCalendar({
             header: {
         		left: 'prev,next today',
         		center: 'title',
         		right: 'month,agendaWeek,basicDay'
         	},
-        	defaultDate: '2016-11-01',
+        	defaultDate: fechaActual,
         	navLinks: true,
         	editable: true,
         	eventLimit: true,
@@ -84,6 +82,7 @@ class EventsManager {
         form_data.append('end_hour', "")
         form_data.append('start_hour', "")
       }
+
       $.ajax({
         url: '../server/new_event.php',
         dataType: "json",
@@ -109,9 +108,6 @@ class EventsManager {
                 end: $('#end_date').val()+" "+$('#end_hour').val()
               })
             }
-
-
-
 
           }else {
             alert(data.msg)
@@ -155,6 +151,7 @@ class EventsManager {
         let id = evento.id,
             start = moment(evento.start).format('YYYY-MM-DD HH:mm:ss'),
             end = moment(evento.end).format('YYYY-MM-DD HH:mm:ss'),
+            todoElDia = evento.allDay,
             form_data = new FormData(),
             start_date,
             end_date,
@@ -163,15 +160,21 @@ class EventsManager {
 
         start_date = start.substr(0,10)
         end_date = end.substr(0,10)
-        start_hour = start.substr(11,8)
-        end_hour = end.substr(11,8)
-
+        start_hour = start.substr(11,5)
+        end_hour = end.substr(11,5)
 
         form_data.append('id', id)
         form_data.append('start_date', start_date)
-        form_data.append('end_date', end_date)
-        form_data.append('start_hour', start_hour)
-        form_data.append('end_hour', end_hour)
+        if (todoElDia == "1"){
+          form_data.append('end_date', "")
+          form_data.append('start_hour', "")
+          form_data.append('end_hour', "")
+        }else {
+          form_data.append('end_date', end_date)
+          form_data.append('start_hour', start_hour)
+          form_data.append('end_hour', end_hour)
+        }
+
 
         $.ajax({
           url: '../server/update_event.php',
@@ -193,7 +196,6 @@ class EventsManager {
           }
         })
     }
-
 }
 
 
