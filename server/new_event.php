@@ -39,9 +39,14 @@ if (!isset($_SESSION["usuario"])){
         $data = array("msg" => 'Cuando dia entero no esta marcado debe indicar hora fin.');
         echo  json_encode($data);
         exit;
+      }elseif ($fechainicio == $fechafinal){
+        if ($horainicio == $horafinal){
+          $data = array("msg" => 'La hora de inicio no puede ser igual a la hora fin.');
+          echo  json_encode($data);
+          exit;
+        }
       }
     }
-
     $conn = new PDO(cadena, UserServ, PassServ);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $stmt = $conn->prepare('insert into eventos (idusuario, titulo, fechainicio, horainicio, fechafinal, horafinal, allday) values (:idusuario, :titulo, :fechainicio, :horainicio, :fechafinal, :horafinal, :allday)');
